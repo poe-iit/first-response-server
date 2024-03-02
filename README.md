@@ -35,4 +35,4 @@ npm start
 # Logic
 
 # Help
-You can message the group, messgae Tomiwa privately on Discord, or ask questions during our weekly meetup if you encounter any problems!
+You can message the group, message Tomiwa privately on Discord, or ask questions during our weekly meetup if you encounter any problems!
