@@ -11,16 +11,16 @@ npm install
 ```
 
 ## Get database connection string
-Ask for access to the mongodb database from Tomiwa and follow this [documentation](https://www.mongodb.com/docs/guides/atlas/connection-string/ "Get Connection String")
+Ask for access to the MongoDB database from Tomiwa and follow this [documentation](https://www.mongodb.com/docs/guides/atlas/connection-string/ "Get Connection String")
 
-## Create .env file
+## Create a .env file
 ```bash
 touch .env
 ```
 OR
 Manually create a new file named `.env`
 
-## Add database connection string to .env file
+## Add database connection string to the .env file
 ```
 DATABASE_URL=<Connection string you got from mongodb>
 ```
@@ -35,4 +35,4 @@ npm start
 # Logic
 
 # Help
-You can send a message on the group, messgae Tomiwa privately on discord or ask the question during our weekly meetup if there is any problem you encountered!
+You can message the group, messgae Tomiwa privately on Discord, or ask questions during our weekly meetup if you encounter any problems!
