@@ -1,6 +1,28 @@
 const { Schema, model } = require("mongoose")
 const { ObjectId } = require("mongoose").Types
 
+const nodeSchema = new Schema({
+  state: {
+    type: String,
+    required: true
+  },
+  isExit: {
+    type: Boolean,
+    required: true
+  },
+  connections: [String], // Array of connections
+  ui: {
+    x: {
+      type: Number,
+      required: true
+    },
+    y: {
+      type: Number,
+      required: true
+    }
+  }
+})
+
 const floorSchema = new Schema({
   name: {
     type: String,
@@ -10,32 +32,15 @@ const floorSchema = new Schema({
     type: ObjectId,
     ref: "Building"
   },
-  nodes: [{
-    id: {
-      type: String,
-      required: true
-    },
-    state: {
-      type: String,
-      required: true
-    },
-    isExit: {
-      type: Boolean,
-      required: true
-    },
-    connections: [String], // Array of connections
-    ui: {
-      x: {
-        type: Number,
-        required: true
-      },
-      y: {
-        type: Number,
-        required: true
-      }
-    },
-    name: String
-  }]
+  nodes: {
+    type: Map,
+    of: nodeSchema
+  }
 }, {
   timestamps: true
 })
+
+module.exports = {
+  floor: () =>  model("Floor", floorSchema),
+  floorSchema
+}
