@@ -24,3 +24,5 @@ const logSchema = new Schema({
 }, {
   timestamps: true
 })
+
+module.exports = model("Log", logSchema)
