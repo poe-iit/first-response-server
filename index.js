@@ -2,6 +2,20 @@ const express = require("express")
 const cors = require("cors")
 const mongoose = require("mongoose")
 const dotenv = require("dotenv")
+const WebSocket = require('ws');
+
+const building = require("./routes/building")
+const floor = require("./routes/floor")
+const log = require("./routes/log")
+
+const buildingModel = require("./models/building")
+const floorModel = require("./models/floor")
+
+const Floor = floorModel.floor()
+
+const wss = new WebSocket.Server({ port: 8080 });
+
+global.subscriptions = require("./config")
 
 dotenv.config()
 
@@ -22,6 +36,34 @@ app.get("/",(req, res) => {
     message: "Hello World!"
   })
 })
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', async function incoming(message) {
+    message = JSON.parse(message)
+    switch(message.type){
+      case "floor-update":
+        if(subscriptions["floors"][message.floorId]) subscriptions["floors"][message.floorId].push(ws)
+        else subscriptions["floors"][message.floorId] = [ws]
+
+        
+        Floor.findById(message.floorId)
+        .then((floor) => {
+          ws.send(JSON.stringify( floor ))
+        })
+        .catch((err) => {
+          ws.send(JSON.stringify({
+            error: err
+          }))
+        })
+      
+        break
+    }
+  });
+});
+
+app.use("/building", building)
+app.use("/floor", floor)
+app.use("/log", log)
 
 mongoose.connect(process.env.DATABASE_URL).then(() => {
   console.log("MongoDB connected")
