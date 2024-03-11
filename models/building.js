@@ -7,9 +7,20 @@ const buildingSchema = new Schema({
     required: true
   },
   floors: [{
-    type: ObjectId,
-    ref: "Floor"
+    id: {
+      type: ObjectId,
+      ref: "Floor"
+    },
+    name: {
+      type: String,
+      required: true
+    }
   }]
 }, {
   timestamps: true
 })
+
+module.exports = {
+  building: () => model("Building", buildingSchema),
+  buildingSchema
+}
