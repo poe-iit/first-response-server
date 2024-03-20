@@ -3,6 +3,7 @@ const cors = require("cors")
 const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 const WebSocket = require('ws');
+const server = require("http").createServer()
 
 const building = require("./routes/building")
 const floor = require("./routes/floor")
@@ -13,13 +14,15 @@ const floorModel = require("./models/floor")
 
 const Floor = floorModel.floor()
 
-const wss = new WebSocket.Server({ port: 3000 });
+const wss = new WebSocket.Server({ server: server });
 
 global.subscriptions = require("./config")
 
 dotenv.config()
 
 const app = express()
+
+server.on('request', app)
 
 // Route for logs
 // Route for buildings
@@ -67,7 +70,7 @@ app.use("/log", log)
 
 mongoose.connect(process.env.DATABASE_URL).then(() => {
   console.log("MongoDB connected")
-  app.listen(process.env.PORT || 5000, () => {
+  server.listen(process.env.PORT || 5000, () => {
     console.log("Server started on http://localhost:" + (process.env.PORT || 5000))
   })
 }).catch((err) => {
