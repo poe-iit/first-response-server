@@ -13,7 +13,7 @@ const floorModel = require("./models/floor")
 
 const Floor = floorModel.floor()
 
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: 3000 });
 
 global.subscriptions = require("./config")
 
