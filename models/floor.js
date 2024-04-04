@@ -35,6 +35,10 @@ const floorSchema = new Schema({
   nodes: {
     type: Map,
     of: nodeSchema
+  },
+  paths: {
+    type: Map,
+    of: Schema.Types.Mixed
   }
 }, {
   timestamps: true
