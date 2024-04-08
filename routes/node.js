@@ -90,7 +90,7 @@ router.get("/direction", async (req, res) => {
   }
   res.status(200).json({
     "nearest": dir || [],
-    "directions": direction
+    direction
   })
 })
 
