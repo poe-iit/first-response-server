@@ -8,8 +8,8 @@ const server = require("http").createServer()
 const building = require("./routes/building")
 const floor = require("./routes/floor")
 const log = require("./routes/log")
+const node = require("./routes/node")
 
-const buildingModel = require("./models/building")
 const floorModel = require("./models/floor")
 
 const Floor = floorModel.floor()
@@ -67,6 +67,7 @@ wss.on('connection', function connection(ws) {
 app.use("/building", building)
 app.use("/floor", floor)
 app.use("/log", log)
+app.use("/node", node)
 
 mongoose.connect(process.env.DATABASE_URL).then(() => {
   console.log("MongoDB connected")
