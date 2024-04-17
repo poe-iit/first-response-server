@@ -88,7 +88,7 @@ router.get("/direction", async (req, res) => {
   }else{
     direction = "N"
   }
-  res.status(200).send(direction)
+  res.status(200).json(direction)
 })
 
 module.exports = router
