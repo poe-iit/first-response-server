@@ -79,19 +79,16 @@ router.get("/direction", async (req, res) => {
   if(floors.paths.has(key)){
     const axis = floors.paths.get(key)
     if(axis === "x"){
-      if(nodes.get(nodeId).ui.x > nodes.get(dir[1]).ui.x)direction = "left"
-      else direction = "right"
+      if(nodes.get(nodeId).ui.x > nodes.get(dir[1]).ui.x)direction = "L"
+      else direction = "R"
     }else{
-      if(nodes.get(nodeId).ui.y > nodes.get(dir[1]).ui.y)direction = "top"
-      else direction = "bottom"
+      if(nodes.get(nodeId).ui.y > nodes.get(dir[1]).ui.y)direction = "U"
+      else direction = "D"
     }
   }else{
-    direction = ""
+    direction = "N"
   }
-  res.status(200).json({
-    "nearest": dir || [],
-    direction
-  })
+  res.status(200).send(direction)
 })
 
 module.exports = router
