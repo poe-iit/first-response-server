@@ -75,12 +75,6 @@ function sendUpdate(floors) {
     return
   }
   const nodes = floors.nodes
-  // if(!nodes.has(nodeId)){
-  //   res.status(400).json({
-  //     "message": "Node not found"
-  //   })
-  //   return
-  // }
   const exits = []
   for(const [key, node] of nodes){
     if(node.isExit && node.state !== "compromised")exits.push(key)
@@ -105,16 +99,6 @@ function sendUpdate(floors) {
     }
     distances["safe"][exit] = dist
   }
-  // let dir, stuck = true
-  // for(const exit in distances){
-  //   if(nodeId in distances[exit]){
-  //     if(!dir || dir[0] > distances[exit][nodeId][0]){
-  //       dir = distances[exit][nodeId]
-  //       stuck = false
-  //     }
-  //   }
-  // }
-  // if(!dir){
   for(const exit of exits){
     const queue = [exit]
     const dist = {[exit]: [0, exit]}
@@ -130,12 +114,6 @@ function sendUpdate(floors) {
     }
     distances["compromised"][exit] = dist
   }
-    // for(const exit in distances){
-    //   if(nodeId in distances[exit]){
-    //     if(!dir || dir[0] > distances[exit][nodeId][0])dir = distances[exit][nodeId]
-    //   }
-    // }
-  // }
   for(const nodeId in subscriptions["nodes"]){
     if(!nodes.has(nodeId)){
       subscriptions["nodes"][nodeId].send("NS")
@@ -207,18 +185,9 @@ wss.on('connection', function connection(ws) {
       subscriptions["nodes"][mesg[1]] = ws
       if(mesg.length > 2)await updateNode(mesg[1], mesg[2])
       else ws.send("NN")
-      // Compromise or not
-      // Update all nodes with new state
     }else{
       ws.send(message)
     }
-    // switch(message?.type){
-    //   case "floor-update":
-    //     break
-    //   default:
-    //     ws.send(message)
-    //     break
-    // }
   });
 });
 
