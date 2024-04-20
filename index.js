@@ -40,11 +40,19 @@ app.get("/",(req, res) => {
   })
 })
 
-const getDistance = (start, end) => {
+function handleFloorUpdate(floor) {
+  if(subscriptions["floors"][floor._id.toString()]){
+    subscriptions["floors"][floor._id.toString()].forEach((ws) => {
+      ws.send(JSON.stringify(floor))
+    })
+  }
+}
+
+function getDistance (start, end) {
   return Math.abs(start.x - end.x) + Math.abs(start.y - end.y)
 }
 
-const updateNode = async (nodeId, state) => {
+async function updateNode(nodeId, state) {
   const floor = await Floor.findById(subscriptions["floor"])
   if(floor){
     if(!floor.nodes.has(nodeId)){
@@ -55,10 +63,11 @@ const updateNode = async (nodeId, state) => {
     floor.nodes.set(nodeId, node)
     await floor.save()
     sendUpdate(floor)
+    handleFloorUpdate(floor)
   }
 }
 
-const sendUpdate = (floors) => {
+function sendUpdate(floors) {
   if(floors === null){
     res.status(400).json({
       "message": "Floor not found"
@@ -178,6 +187,7 @@ wss.on('connection', function connection(ws) {
       message = JSON.parse(message)
     }catch(err){
       console.log(err)
+      message = message.toString()
     }
     if(message?.type === "floor-update"){
       if(subscriptions["floors"][message.floorId]) subscriptions["floors"][message.floorId].push(ws)
@@ -194,10 +204,10 @@ wss.on('connection', function connection(ws) {
         }))
       })
     }
-    else if(message.startsWith("@SOTERIA")){
+    else if(message.slice(0, 8) === "@SOTERIA"){
       const mesg = message.split(",")
       subscriptions["nodes"][mesg[1]] = ws
-      if(mesg.length > 2)updateNode(mesg[1], mesg[2])
+      if(mesg.length > 2)await updateNode(mesg[1], mesg[2])
       else ws.send("NN")
       // Compromise or not
       // Update all nodes with new state
