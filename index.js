@@ -59,7 +59,6 @@ const updateNode = async (nodeId, state) => {
 }
 
 const sendUpdate = (floors) => {
-  const { nodeId, floorId } = req.query
   if(floors === null){
     res.status(400).json({
       "message": "Floor not found"
@@ -199,6 +198,7 @@ wss.on('connection', function connection(ws) {
       const mesg = message.split(",")
       subscriptions["nodes"][mesg[1]] = ws
       if(mesg.length > 2)updateNode(mesg[1], mesg[2])
+      else ws.send("NN")
       // Compromise or not
       // Update all nodes with new state
     }
