@@ -184,7 +184,10 @@ wss.on('connection', function connection(ws) {
       const mesg = message.split(",")
       subscriptions["nodes"][mesg[1]] = ws
       if(mesg.length > 2)await updateNode(mesg[1], mesg[2])
-      else ws.send("NN")
+      else {
+        const floor = await Floor.findById(subscriptions["floor"])
+        sendUpdate(floor)
+      }
     }else{
       ws.send(message)
     }
