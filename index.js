@@ -138,7 +138,7 @@ function sendUpdate(floors) {
   // }
   for(const nodeId in subscriptions["nodes"]){
     if(!nodes.has(nodeId)){
-      subscriptions[nodes][nodeId].send("NN")
+      subscriptions["nodes"][nodeId].send("NN")
     }
     let dir, stuck = true
     for(const exit in distances["safe"]){
