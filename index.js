@@ -154,7 +154,6 @@ function sendUpdate(floors) {
         if(nodeId in distances["compromised"][exit]){
           if(!dir || dir[0] > distances["compromised"][exit][nodeId][0]){
             dir = distances["compromised"][exit][nodeId]
-            stuck = false
           }
         }
       }
