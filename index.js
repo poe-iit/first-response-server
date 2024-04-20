@@ -42,8 +42,12 @@ app.get("/",(req, res) => {
 
 wss.on('connection', function connection(ws) {
   ws.on('message', async function incoming(message) {
-    message = JSON.parse(message)
-    switch(message.type){
+    try{
+      message = JSON.parse(message)
+    }catch(err){
+      console.log(err)
+    }
+    switch(message?.type){
       case "floor-update":
         if(subscriptions["floors"][message.floorId]) subscriptions["floors"][message.floorId].push(ws)
         else subscriptions["floors"][message.floorId] = [ws]
@@ -59,6 +63,9 @@ wss.on('connection', function connection(ws) {
           }))
         })
       
+        break
+      default:
+        ws.send("This works!")
         break
     }
   });

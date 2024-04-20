@@ -46,10 +46,13 @@ router.get("/direction", async (req, res) => {
     }
     distances[exit] = dist
   }
-  let dir
+  let dir, stuck = true
   for(const exit in distances){
     if(nodeId in distances[exit]){
-      if(!dir || dir[0] > distances[exit][nodeId][0])dir = distances[exit][nodeId]
+      if(!dir || dir[0] > distances[exit][nodeId][0]){
+        dir = distances[exit][nodeId]
+        stuck = false
+      }
     }
   }
   if(!dir){
@@ -88,7 +91,8 @@ router.get("/direction", async (req, res) => {
   }else{
     direction = "N"
   }
-  res.status(200).json(direction)
+  res.status(200).json(direction + (
+    nodes[nodeId].state === "compromised" ? "C" : (stuck ? "T" : "S")))
 })
 
 module.exports = router
