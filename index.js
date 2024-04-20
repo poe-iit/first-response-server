@@ -176,7 +176,7 @@ function sendUpdate(floors) {
       direction = "N"
     }
     subscriptions["nodes"][nodeId].send(direction + (
-      nodes[nodeId].state === "compromised" ? "C" : (stuck ? "T" : "S")
+      nodes.get(nodeId).state === "compromised" ? "C" : (stuck ? "T" : "S")
     ))
   }
 }
@@ -186,7 +186,6 @@ wss.on('connection', function connection(ws) {
     try{
       message = JSON.parse(message)
     }catch(err){
-      console.log(err)
       message = message.toString()
     }
     if(message?.type === "floor-update"){
