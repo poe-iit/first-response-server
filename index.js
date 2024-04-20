@@ -211,6 +211,8 @@ wss.on('connection', function connection(ws) {
       else ws.send("NN")
       // Compromise or not
       // Update all nodes with new state
+    }else{
+      ws.send(message)
     }
     // switch(message?.type){
     //   case "floor-update":
