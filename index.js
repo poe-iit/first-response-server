@@ -40,6 +40,139 @@ app.get("/",(req, res) => {
   })
 })
 
+const getDistance = (start, end) => {
+  return Math.abs(start.x - end.x) + Math.abs(start.y - end.y)
+}
+
+const updateNode = async (nodeId, state) => {
+  const floor = await Floor.findById(subscriptions["floor"])
+  if(floor){
+    if(!floor.nodes.has(nodeId)){
+      return
+    }
+    const node = floor.nodes.get(nodeId)
+    node.state = state === "C" ? "compromised" : "safe"
+    floor.nodes.set(nodeId, node)
+    await floor.save()
+    sendUpdate(floor)
+  }
+}
+
+const sendUpdate = (floors) => {
+  const { nodeId, floorId } = req.query
+  if(floors === null){
+    res.status(400).json({
+      "message": "Floor not found"
+    })
+    return
+  }
+  const nodes = floors.nodes
+  // if(!nodes.has(nodeId)){
+  //   res.status(400).json({
+  //     "message": "Node not found"
+  //   })
+  //   return
+  // }
+  const exits = []
+  for(const [key, node] of nodes){
+    if(node.isExit && node.state !== "compromised")exits.push(key)
+  }
+  const distances = {
+    "safe": {},
+    "compromised": {}
+  }
+  for(const exit of exits){
+    const queue = [exit]
+    const dist = {[exit]: [0, exit]}
+    while(queue.length){
+      const node = queue.pop()
+      if(nodes.get(node).state === "compromised")continue
+      for(const neighbor of nodes.get(node).connections){
+        if(!(neighbor in dist) || dist[neighbor][0] > getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0]){
+          dist[neighbor] = [getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0], node]
+          queue.push(neighbor)
+          queue.sort((a,b) => dist[b] - dist[a])
+        }
+      }
+    }
+    distances["safe"][exit] = dist
+  }
+  // let dir, stuck = true
+  // for(const exit in distances){
+  //   if(nodeId in distances[exit]){
+  //     if(!dir || dir[0] > distances[exit][nodeId][0]){
+  //       dir = distances[exit][nodeId]
+  //       stuck = false
+  //     }
+  //   }
+  // }
+  // if(!dir){
+  for(const exit of exits){
+    const queue = [exit]
+    const dist = {[exit]: [0, exit]}
+    while(queue.length){
+      const node = queue.pop()
+      for(const neighbor of nodes.get(node).connections){
+        if(!(neighbor in dist) || dist[neighbor][0] > getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0]){
+          dist[neighbor] = [getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0], node]
+          queue.push(neighbor)
+          queue.sort((a,b) => dist[b] - dist[a])
+        }
+      }
+    }
+    distances["compromised"][exit] = dist
+  }
+    // for(const exit in distances){
+    //   if(nodeId in distances[exit]){
+    //     if(!dir || dir[0] > distances[exit][nodeId][0])dir = distances[exit][nodeId]
+    //   }
+    // }
+  // }
+  for(const nodeId in subscriptions["nodes"]){
+    if(!nodes.has(nodeId)){
+      subscriptions[nodes][nodeId].send("NN")
+    }
+    let dir, stuck = true
+    for(const exit in distances["safe"]){
+      if(nodeId in distances["safe"][exit]){
+        if(!dir || dir[0] > distances["safe"][exit][nodeId][0]){
+          dir = distances["safe"][exit][nodeId]
+          stuck = false
+        }
+      }
+    }
+    if(!dir){
+      for(const exit in distances["compromised"]){
+        if(nodeId in distances["compromised"][exit]){
+          if(!dir || dir[0] > distances["compromised"][exit][nodeId][0]){
+            dir = distances["compromised"][exit][nodeId]
+            stuck = false
+          }
+        }
+      }
+
+    }
+
+    let direction
+    const key = nodeId+"->"+(dir ? dir[1] : "")
+    if(floors.paths.has(key)){
+      const axis = floors.paths.get(key)
+      if(axis === "x"){
+        if(nodes.get(nodeId).ui.x > nodes.get(dir[1]).ui.x)direction = "L"
+        else direction = "R"
+      }else{
+        if(nodes.get(nodeId).ui.y > nodes.get(dir[1]).ui.y)direction = "U"
+        else direction = "D"
+      }
+    }else{
+      direction = "N"
+    }
+    subscriptions["nodes"][nodeId].send(direction + (
+      nodes[nodeId].state === "compromised" ? "C" : (stuck ? "T" : "S")
+    ))
+  }
+}
+
 wss.on('connection', function connection(ws) {
   ws.on('message', async function incoming(message) {
     try{
@@ -47,27 +180,35 @@ wss.on('connection', function connection(ws) {
     }catch(err){
       console.log(err)
     }
-    switch(message?.type){
-      case "floor-update":
-        if(subscriptions["floors"][message.floorId]) subscriptions["floors"][message.floorId].push(ws)
-        else subscriptions["floors"][message.floorId] = [ws]
-
-        
-        Floor.findById(message.floorId)
-        .then((floor) => {
-          ws.send(JSON.stringify( floor ))
-        })
-        .catch((err) => {
-          ws.send(JSON.stringify({
-            error: err
-          }))
-        })
+    if(message?.type === "floor-update"){
+      if(subscriptions["floors"][message.floorId]) subscriptions["floors"][message.floorId].push(ws)
+      else subscriptions["floors"][message.floorId] = [ws]
+  
       
-        break
-      default:
-        ws.send("This works!")
-        break
+      Floor.findById(message.floorId)
+      .then((floor) => {
+        ws.send(JSON.stringify( floor ))
+      })
+      .catch((err) => {
+        ws.send(JSON.stringify({
+          error: err
+        }))
+      })
     }
+    else if(message.startsWith("@SOTERIA")){
+      const mesg = message.split(",")
+      subscriptions["nodes"][mesg[1]] = ws
+      if(mesg.length > 2)updateNode(mesg[1], mesg[2])
+      // Compromise or not
+      // Update all nodes with new state
+    }
+    // switch(message?.type){
+    //   case "floor-update":
+    //     break
+    //   default:
+    //     ws.send(message)
+    //     break
+    // }
   });
 });
 
