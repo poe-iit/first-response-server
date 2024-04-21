@@ -153,7 +153,7 @@ function sendUpdate(floors) {
       direction = "N"
     }
     subscriptions["nodes"][nodeId].send(direction + (
-      nodes.get(nodeId).state === "compromised" ? "C" : (stuck ? "T" : "S")
+      nodes?.get(nodeId)?.state === "compromised" ? "C" : (stuck ? "T" : "S")
     ))
   }
 }
