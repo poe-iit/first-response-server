@@ -39,6 +39,22 @@ const floorSchema = new Schema({
   paths: {
     type: Map,
     of: Schema.Types.Mixed
+  },
+  image: {
+    name: {
+      type: String,
+      required: true
+    },
+    url: {
+      type: String,
+      required: true
+    },
+    position: [Number],
+    scale:{
+      type: Number,
+      default: 1,
+      required: true
+    }
   }
 }, {
   timestamps: true
