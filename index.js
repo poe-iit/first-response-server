@@ -204,7 +204,7 @@ wss.on('connection', function connection(ws) {
       subscriptions["floors"][floorId] = subscriptions["floors"][floorId].filter(sub => sub !== ws)
     }
     for(const nodeId in subscriptions["nodes"]){
-      subscriptions["nodes"][nodeId] = subscriptions["nodes"][nodeId].filter(sub => sub !== ws)
+      if(subscriptions["nodes"][nodeId] === ws)delete subscriptions["nodes"][nodeId]
     }
   });
 });
