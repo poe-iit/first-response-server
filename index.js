@@ -193,6 +193,20 @@ wss.on('connection', function connection(ws) {
       ws.send(message)
     }
   });
+
+  // Listen for the close event on the connection
+  ws.on('close', function(code, reason) {
+    console.log(`Connection closed with code ${code} and reason: ${reason}`);
+
+    // Clean up code here
+    // Remove the WebSocket from any subscriptions it was part of
+    for(const floorId in subscriptions["floors"]){
+      subscriptions["floors"][floorId] = subscriptions["floors"][floorId].filter(sub => sub !== ws)
+    }
+    for(const nodeId in subscriptions["nodes"]){
+      subscriptions["nodes"][nodeId] = subscriptions["nodes"][nodeId].filter(sub => sub !== ws)
+    }
+  });
 });
 
 app.use("/building", building)
