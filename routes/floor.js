@@ -45,7 +45,7 @@ function sendUpdate(floors) {
         if(!(neighbor in dist) || dist[neighbor][0] > getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0]){
           dist[neighbor] = [getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0], node]
           queue.push(neighbor)
-          queue.sort((a,b) => dist[b] - dist[a])
+          queue.sort((a,b) => dist[b][0] - dist[a][0])
         }
       }
     }
@@ -60,7 +60,7 @@ function sendUpdate(floors) {
         if(!(neighbor in dist) || dist[neighbor][0] > getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0]){
           dist[neighbor] = [getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0], node]
           queue.push(neighbor)
-          queue.sort((a,b) => dist[b] - dist[a])
+          queue.sort((a,b) => dist[b][0] - dist[a][0])
         }
       }
     }
