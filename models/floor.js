@@ -43,17 +43,14 @@ const floorSchema = new Schema({
   image: {
     name: {
       type: String,
-      required: true
     },
     url: {
       type: String,
-      required: true
     },
     position: [Number],
     scale:{
       type: Number,
       default: 1,
-      required: true
     }
   }
 }, {
