@@ -144,10 +144,17 @@ router.put("/:id/nodes", async (req, res) => {
   const floor = await Floor.findByIdAndUpdate(req.params.id, updateQuery, { new: true })
 
   handleFloorUpdate(floor)
-  sendUpdate(floor)
   res.status(200).json({ message: "Node(s) updated" })
+  if(floor._id.toString() === subscriptions["floor"])sendUpdate(floor)
 
   // Update all clients watching with the new state
+})
+
+router.get("/updateDefault", async (req, res) => {
+  const {floorId} = req.query
+  subscriptions["floor"] = floorId
+  const floor = await Floor.findById(floorId)
+  sendUpdate(floor)
 })
 
 router.delete("/:id", async (req, res) => {
