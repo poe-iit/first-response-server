@@ -158,7 +158,7 @@ router.put("/:id/nodes", async (req, res) => {
 
   handleFloorUpdate(floor)
   res.status(200).json({ message: "Node(s) updated" })
-  if(floor._id.toString() === subscriptions["floor"])sendUpdate(floor)
+  if(floor.id === subscriptions["floor"])sendUpdate(floor)
 
   // Update all clients watching with the new state
 })
