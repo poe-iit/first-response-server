@@ -2,7 +2,7 @@
 
 ## Clone repository
 ```bash
-git clone git@github.com:IPRO-POE/first-response-server.git
+git clone git@github.com:poe-iit/first-response-server.git
 ```
 
 ## Install dependencies
