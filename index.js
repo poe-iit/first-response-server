@@ -4,6 +4,7 @@ const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 const WebSocket = require('ws');
 const server = require("http").createServer()
+const authenticate = require("./middleware/authenticate")
 
 const building = require("./routes/building")
 const floor = require("./routes/floor")
@@ -34,6 +35,7 @@ server.on('request', app)
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(authenticate)
 
 app.get("/",(req, res) => {
   res.status(200).json({
