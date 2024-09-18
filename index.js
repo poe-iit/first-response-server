@@ -11,6 +11,7 @@ const floor = require("./routes/floor")
 const log = require("./routes/log")
 const node = require("./routes/node")
 const generateSignature = require("./routes/generate_signature")
+const auth = require("./routes/auth")
 
 const floorModel = require("./models/floor")
 
@@ -216,6 +217,7 @@ app.use("/floor", floor)
 app.use("/log", log)
 app.use("/node", node)
 app.use("/generate_signature", generateSignature)
+app.use("/auth", auth)
 
 mongoose.connect(process.env.DATABASE_URL).then(() => {
   console.log("MongoDB connected")
