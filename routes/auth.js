@@ -39,4 +39,28 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/signup', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const existingUser = await userModel.findOne({ email });
+
+    if(existingUser) {
+      return res.status(400).json({ error: 'Email is currently in use' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await userModel.create({ email, password: hashedPassword, roles: ["user"] });
+
+    const token = jwt.sign({ userId: newUser.id, roles: ["user"] }, process.env.ACCESS_SECRET, { expiresIn: '3d' });
+
+    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+
+    res.json({ message: 'Signup successful' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 module.exports = router
