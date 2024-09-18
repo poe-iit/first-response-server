@@ -9,7 +9,7 @@ function authenticateToken(req, res, next) {
   }
 
   // Get the encrypted token
-  let token =  cookieObj['jwt']
+  let token =  cookieObj['token']
 
   if(token == null || token === '' || token === undefined){
     const authHeader = req?.headers['authorization'] || req?.headers['Authorization']
@@ -36,7 +36,7 @@ function authenticateToken(req, res, next) {
       req.isAuth = false;
       return next();
     }
-    
+
     // If the token is valid, the user is authenticated
     req.isAuth = true;
     req.user = user;
