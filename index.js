@@ -59,8 +59,46 @@ app.use("/graphql", graphqlHTTP((req, res) => ({
 // Connect to MongoDB using the conntextion string from environment variables
 mongoose.connect(process.env.DATABASE_URL).then(() => {
   console.log("MongoDB connected")
-  server.listen(process.env.PORT || 5000, () => {
-    console.log("Server started on http://localhost:" + (process.env.PORT || 5000))
+
+  // Start the HTTP server and listen on the specified PORT
+  const server = app.listen(process.env.PORT || 5000, () => {
+    // Log HTTP connection info
+    const sAddress = server.address()
+    console.log(`[${process.env.NODE_ENV}] GraphQL Server running on http://localhost:${sAddress.port}/graphql`)
+
+    // Websocket configuration for GraphQL subscriptions
+    const path = "/subscription"
+    const wsServer = new WebSocket.Server({
+      server,
+      path
+    })
+
+    // Set up the GraphQL Websocket server for handling real-time subscriptions
+    useServer({
+      schema: graphqlSchema,
+      roots: resolvers,
+      execute,
+      subscribe,
+      onConnect: (ctx) => {
+        console.log('Connect');
+      },
+      onSubscribe: (ctx, msg) => {
+        console.log('Subscribe');
+      },
+      onNext: (ctx, msg, args, result) => {
+        console.debug('Next');
+      },
+      onError: (ctx, msg, errors) => {
+        console.error('Error');
+      },
+      onComplete: (ctx, msg) => {
+        console.log('Complete');
+      }
+    }, wsServer)
+
+    // Log Websocket connection info
+    const wsAddress = wsServer.address()
+    console.log(`[${process.env.NODE_ENV}] GraphQL Websockets listening on ws://localhost:${wsAddress.port}${path}`)
   })
 }).catch((err) => {
   console.log(err)
