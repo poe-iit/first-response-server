@@ -1,8 +1,10 @@
+// Destructure Schema from Mongoose to define a schema for a MongoDB collection
 const { Schema } = require("mongoose")
+
+// Destructure ObjectId type from Mongoose to use it as a reference type in the schema
 const { ObjectId } = require("mongoose").Types
 
-// username, email, password, roles, buildings
-
+// Define a schema for a "User" collection
 const userSchema = new Schema({
   username: {
     type: String,
@@ -21,17 +23,15 @@ const userSchema = new Schema({
     required: true
   },
   buildings: [{
-    id: {
       type: ObjectId,
       ref: "Building"
-    },
-    name: {
-      type: String,
-      required: true
-    }
-  }]
+    }]
 }, {
+  // Add createdAt and updatedAt timestamps to the schema automatically
   timestamps: true
 })
 
-module.exports = userSchema
+// Export the user schema as part of an object
+module.exports = {
+  userSchema
+}
