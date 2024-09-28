@@ -1,46 +1,52 @@
-const jwt = require('jsonwebtoken');
-function authenticateToken(req, res, next) {
-  // Boring stuffs to turn the cookie into an object
+// Import the jsonwebtoken library to handle JWT verification
+const jwt = require('jsonwebtoken')
+
+// Middleware function to authenticate tokens in incoming requests
+function authenticateToken(req, _, next) {
+  // Parse cookies from the request headers and create an object to store them
   const cookieSplit = String(req.headers.cookie).split('; ')
   const cookieObj = {}
+
+  // Loop through each cookie and split it into key-value pairs
   for(const str of cookieSplit){
     const [key, value] = str.split('=')
     cookieObj[key] = value
   }
 
-  // Get the encrypted token
+  // Extract the 'token' from the cookies
   let token =  cookieObj['token']
 
+  // If the token is missing or empty, try to get it from the Authorization header
   if(token == null || token === '' || token === undefined){
+    // Check the Authorization header (supporting different capitalizations)
     const authHeader = req?.headers['authorization'] || req?.headers['Authorization']
   
+    // If the Authorization header is present, extract the token part
     if (authHeader) {
       token = authHeader.split(' ')[1]
     }
   }
 
-
-
-  // Check if the token is null or empty
+  // If no token is found, mark the request as unauthenticated and move to the next middleware
   if (token === null || token === '' || token === undefined) {
-    // If the token is null or empty, the user is not authenticated
-    req.isAuth = false;
-    // Tell the request to move along to it's actual destination(the route it was sent to)
-    return next();
+    req.isAuth = false
+    return next()
   }
 
-  // Fancy function to verify the token
+  // Verify the token using the secret stored in environment variables
   jwt.verify(token, process.env.ACCESS_SECRET, (err, user) => {
-    // If the token is invalid, the user is not authenticated
+    // If the token is invalid, set isAuth to false and proceed to the next middleware
     if (err) {
-      req.isAuth = false;
-      return next();
+      req.isAuth = false
+      return next()
     }
 
-    // If the token is valid, the user is authenticated
-    req.isAuth = true;
-    req.user = user;
-    next();
-  });
+    // If the token is valid, mark the request as authenticated and attach the decoded user info
+    req.isAuth = true
+    req.user = user
+    next() // Call the next middleware or route handler
+  })
 }
-module.exports = authenticateToken;
+
+// Export the authenticateToken function for use as middleware in other parts of the application
+module.exports = authenticateToken
