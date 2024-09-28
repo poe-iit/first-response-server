@@ -38,187 +38,25 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(authenticate)
 
-app.get("/",(req, res) => {
-  res.status(200).json({
-    message: "Hello World!"
-  })
+// Create a context object for GraphQL to include auth status and user info
+const createContext = (req, res) => ({
+  response: res,
+  isAuth: req.isAuth,
+  user: req.user
 })
 
-function handleFloorUpdate(floor) {
-  if(subscriptions["floors"][floor._id.toString()]){
-    subscriptions["floors"][floor._id.toString()].forEach((ws) => {
-      ws.send(JSON.stringify(floor))
-    })
-  }
-}
+// Routes to test server and publish events on the pubsub system
+app.use("/test", test)
 
-function getDistance (start, end) {
-  return Math.abs(start.x - end.x) + Math.abs(start.y - end.y)
-}
+// GraphQL API endpoint, enables graphiql UI and sets up schema, resolvers, and context
+app.use("/graphql", graphqlHTTP((req, res) => ({
+  schema: graphqlSchema,
+  rootValue: resolvers,
+  context: createContext(req, res),
+  graphiql: true
+})))
 
-async function updateNode(nodeId, state) {
-  const floor = await Floor.findById(subscriptions["floor"])
-  if(floor){
-    if(!floor.nodes.has(nodeId)){
-      return
-    }
-    const node = floor.nodes.get(nodeId)
-    node.state = state === "C" ? "compromised" : "safe"
-    floor.nodes.set(nodeId, node)
-    await floor.save()
-    sendUpdate(floor)
-    handleFloorUpdate(floor)
-  }
-}
-
-function sendUpdate(floors) {
-  if(floors === null){
-    res.status(400).json({
-      "message": "Floor not found"
-    })
-    return
-  }
-  const nodes = floors.nodes
-  const exits = []
-  for(const [key, node] of nodes){
-    if(node.isExit && node.state !== "compromised")exits.push(key)
-  }
-  const distances = {
-    "safe": {},
-    "compromised": {}
-  }
-  for(const exit of exits){
-    const queue = [exit]
-    const dist = {[exit]: [0, exit]}
-    while(queue.length){
-      const node = queue.pop()
-      if(nodes.get(node).state === "compromised")continue
-      for(const neighbor of nodes.get(node).connections){
-        if(!(neighbor in dist) || dist[neighbor][0] > getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0]){
-          dist[neighbor] = [getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0], node]
-          queue.push(neighbor)
-          queue.sort((a,b) => dist[b][0] - dist[a][0])
-        }
-      }
-    }
-    distances["safe"][exit] = dist
-  }
-  for(const exit of exits){
-    const queue = [exit]
-    const dist = {[exit]: [0, exit]}
-    while(queue.length){
-      const node = queue.pop()
-      for(const neighbor of nodes.get(node).connections){
-        if(!(neighbor in dist) || dist[neighbor][0] > getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0]){
-          dist[neighbor] = [getDistance(nodes.get(neighbor).ui, nodes.get(node).ui) + dist[node][0], node]
-          queue.push(neighbor)
-          queue.sort((a,b) => dist[b][0] - dist[a][0])
-        }
-      }
-    }
-    distances["compromised"][exit] = dist
-  }
-  for(const nodeId in subscriptions["nodes"]){
-    if(!nodes.has(nodeId)){
-      subscriptions["nodes"][nodeId].send("NS")
-    }
-    let dir, stuck = true
-    for(const exit in distances["safe"]){
-      if(nodeId in distances["safe"][exit]){
-        if(!dir || dir[0] > distances["safe"][exit][nodeId][0]){
-          dir = distances["safe"][exit][nodeId]
-          stuck = false
-        }
-      }
-    }
-    if(!dir){
-      for(const exit in distances["compromised"]){
-        if(nodeId in distances["compromised"][exit]){
-          if(!dir || dir[0] > distances["compromised"][exit][nodeId][0]){
-            dir = distances["compromised"][exit][nodeId]
-          }
-        }
-      }
-
-    }
-
-    let direction
-    const key = nodeId+"->"+(dir ? dir[1] : "")
-    if(floors.paths.has(key)){
-      const axis = floors.paths.get(key)
-      if(axis === "x"){
-        if(nodes.get(nodeId).ui.x > nodes.get(dir[1]).ui.x)direction = "L"
-        else direction = "R"
-      }else{
-        if(nodes.get(nodeId).ui.y > nodes.get(dir[1]).ui.y)direction = "U"
-        else direction = "D"
-      }
-    }else{
-      direction = "N"
-    }
-    subscriptions["nodes"][nodeId].send(direction + (
-      nodes?.get(nodeId)?.state === "compromised" ? "C" : (stuck ? "T" : "S")
-    ))
-  }
-}
-
-wss.on('connection', function connection(ws) {
-  ws.on('message', async function incoming(message) {
-    try{
-      message = JSON.parse(message)
-    }catch(err){
-      message = message.toString()
-    }
-    if(message?.type === "floor-update"){
-      if(subscriptions["floors"][message.floorId]) subscriptions["floors"][message.floorId].push(ws)
-      else subscriptions["floors"][message.floorId] = [ws]
-  
-      
-      Floor.findById(message.floorId)
-      .then((floor) => {
-        ws.send(JSON.stringify( floor ))
-      })
-      .catch((err) => {
-        ws.send(JSON.stringify({
-          error: err
-        }))
-      })
-    }
-    else if(message.slice(0, 8) === "@SOTERIA"){
-      const mesg = message.split(",")
-      subscriptions["nodes"][mesg[1]] = ws
-      if(mesg.length > 2)await updateNode(mesg[1], mesg[2])
-      else {
-        const floor = await Floor.findById(subscriptions["floor"])
-        sendUpdate(floor)
-      }
-    }else{
-      ws.send(message)
-    }
-  });
-
-  // Listen for the close event on the connection
-  ws.on('close', function(code, reason) {
-    console.log(`Connection closed with code ${code} and reason: ${reason}`);
-
-    // Clean up code here
-    // Remove the WebSocket from any subscriptions it was part of
-    for(const floorId in subscriptions["floors"]){
-      subscriptions["floors"][floorId] = subscriptions["floors"][floorId].filter(sub => sub !== ws)
-    }
-    for(const nodeId in subscriptions["nodes"]){
-      if(subscriptions["nodes"][nodeId] === ws)delete subscriptions["nodes"][nodeId]
-    }
-  });
-});
-
-app.use("/building", building)
-app.use("/floor", floor)
-app.use("/log", log)
-app.use("/node", node)
-app.use("/generate_signature", generateSignature)
-app.use("/auth", auth)
-
+// Connect to MongoDB using the conntextion string from environment variables
 mongoose.connect(process.env.DATABASE_URL).then(() => {
   console.log("MongoDB connected")
   server.listen(process.env.PORT || 5000, () => {
