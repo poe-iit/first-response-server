@@ -1,41 +1,37 @@
+// Import necessary packages
 const express = require("express")
 const cors = require("cors")
 const mongoose = require("mongoose")
 const dotenv = require("dotenv")
-const WebSocket = require('ws');
-const server = require("http").createServer()
+const WebSocket = require('ws')
 const authenticate = require("./middleware/authenticate")
 
-const building = require("./routes/building")
-const floor = require("./routes/floor")
-const log = require("./routes/log")
-const node = require("./routes/node")
-const generateSignature = require("./routes/generate_signature")
-const auth = require("./routes/auth")
+// Import GraphQL related tools
+const { graphqlHTTP } = require("express-graphql")
+const { useServer } = require("graphql-ws/lib/use/ws")
+const { subscribe, execute } = require("graphql")
 
-const floorModel = require("./models/floor")
+// Import GraphQL schema and resolvers
+const { schema: graphqlSchema } = require("./graphql/typeDefs/schema");
+const { resolvers } = require("./graphql/resolvers/resolvers");
 
-const Floor = floorModel.floor()
+// Import /test router
+const test = require("./route/test")
 
-const wss = new WebSocket.Server({ server: server });
-
-global.subscriptions = require("./config")
-
+// Load environment variables
 dotenv.config()
 
+// Create an instance of the Express application
 const app = express()
 
-server.on('request', app)
-
-// Route for logs
-// Route for buildings
-//   Route for floors
-//     Route for nodes/exit signs
-// Websocket for floor updates
-
+// Use CORS to handle cross-origin requests
 app.use(cors())
+
+// Parse incoming JSON and URL-encoded data
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+// Apply the custom authentication middleware
 app.use(authenticate)
 
 // Create a context object for GraphQL to include auth status and user info
@@ -101,5 +97,6 @@ mongoose.connect(process.env.DATABASE_URL).then(() => {
     console.log(`[${process.env.NODE_ENV}] GraphQL Websockets listening on ws://localhost:${wsAddress.port}${path}`)
   })
 }).catch((err) => {
+  // Log any errors during MongoDB connection
   console.log(err)
 })
