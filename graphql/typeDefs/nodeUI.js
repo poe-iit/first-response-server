@@ -1,7 +1,7 @@
 const nodeUISchema = `
   type NodeUI {
-    x: Int!
-    y: Int!
+    x: Float!
+    y: Float!
   }
 `
 
