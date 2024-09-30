@@ -15,11 +15,24 @@ class Floor {
   }
 
   constructor(floor) {
+    const Node = require("./node")
     this.floor = floor
 
     this.id = floor.id
     this.name = floor.name
-    this.nodes = floor.nodes
+    const nodes = []
+    for(const [id, node] of floor.nodes) {
+      const newNode = {
+        id: node.id,
+        ui: node.ui,  
+        state: node.state,
+        isExit: node.isExit,
+        connections: node.connections,
+        name: id
+      }
+      nodes.push(new Node(newNode))
+    }
+    this.nodes = nodes
     this.image = floor.image
     this.createdAt = floor.createdAt
     this.updatedAt = floor.updatedAt
