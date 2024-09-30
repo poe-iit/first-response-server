@@ -3,6 +3,7 @@ const { Schema } = require("mongoose")
 
 // Define a schema for a "Node" collection
 const nodeSchema = new Schema({
+  name: String,
   state: {
     type: String,
     required: true
