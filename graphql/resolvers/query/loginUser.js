@@ -22,9 +22,17 @@ const loginUser = async ({ email, password }, context) => {
     throw new Error("Invalid password")
   }
 
-  const token = jwt.sign({ userId: user.id, roles: user.roles }, process.env.ACCESS_SECRET, { expiresIn: '3d' })
+  const userId = user.id
+  const roles = user.roles
+
+  const token = jwt.sign({ userId, roles }, process.env.ACCESS_SECRET, { expiresIn: '3d' })
 
   context.response.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
+  context.isAuth = true
+  context.user = {
+    userId,
+    roles
+  }
   
   return new User(user, context)
 }

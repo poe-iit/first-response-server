@@ -19,10 +19,19 @@ const createUser = async ({ email, password }, context) => {
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const newUser = await UserModel.create({ email, password: hashedPassword, roles: ["user"] })
+  
+  const userId = newUser.id
+  const roles = ["user"]
 
-  const token = jwt.sign({ userId: newUser.id, roles: ["user"] }, process.env.ACCESS_SECRET, { expiresIn: '3d' })
+  const token = jwt.sign({ userId, roles }, process.env.ACCESS_SECRET, { expiresIn: '3d' })
 
   context.response.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
+
+  context.isAuth = true
+  context.user = {
+    userId,
+    roles
+  }
 
   return new User(newUser)
 }

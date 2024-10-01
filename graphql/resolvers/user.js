@@ -18,7 +18,7 @@ class User {
   }
 
   constructor(user, context) {
-    if(!context.isAuth) throw new Error("Error retrieving data. You are not authenticated.")
+    if(!context?.isAuth) throw new Error("Error retrieving data. You are not authenticated.")
     this.context = context
     this.user = user
 
