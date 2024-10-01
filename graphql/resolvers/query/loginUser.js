@@ -26,7 +26,7 @@ const loginUser = async ({ email, password }, context) => {
 
   context.response.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
   
-  return new User(user)
+  return new User(user, context)
 }
 
 // Export the 'loginUser' function to make it accessible from other modules

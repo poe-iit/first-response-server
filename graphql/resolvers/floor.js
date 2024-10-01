@@ -5,17 +5,20 @@ const FloorModel = model("Floor", floorSchema)
 
 // Define a 'Floor' class to encapsulate floor-related operations and data
 class Floor {
-  static async build(floorId) {
+  static async build(floorId, context) {
+    if(!context?.isAuth) throw new Error("Error retrieving data. You are not authenticated.")
     const floor = await FloorModel.findById(floorId)
 
     if (!floor) {
       throw new Error(`Floor ${floorId} not found`)
     }
-    return new Floor(floor)
+    return new Floor(floor, context)
   }
 
-  constructor(floor) {
+  constructor(floor, context) {
+    if(!context?.isAuth) throw new Error("Error retrieving Floor data. You are not authenticated.")
     const Node = require("./node")
+    this.context = context
     this.floor = floor
 
     this.id = floor.id
@@ -30,7 +33,7 @@ class Floor {
         connections: node.connections,
         name: id
       }
-      nodes.push(new Node(newNode))
+      nodes.push(new Node(newNode, this.context))
     }
     this.nodes = nodes
     this.image = floor.image
@@ -41,7 +44,7 @@ class Floor {
   async building() {
     const Building = require("./building")
     const buildingId = this.floor.building
-    const building = await Building.build(buildingId)
+    const building = await Building.build(buildingId, this.context)
     return building
   }
 }
