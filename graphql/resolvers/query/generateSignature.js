@@ -20,7 +20,7 @@ const generateSignature = async ({ id }, context) => {
 
   const signature = crypto.createHash("sha1").update(param_string+process.env.CLOUDINARY_SECRET).digest("hex")
 
-  const response = new Signature({signature, timestamp}, context)
+  const response = new Signature({signature, timeStamp: timestamp}, context)
   return response
 }
 
