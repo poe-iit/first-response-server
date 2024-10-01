@@ -4,8 +4,9 @@ const Floor = require("../floor")
 
 // Define an asynchronous function to fetch a floor based on the provided 'id'
 // The function expects an object with an 'id' property
-const getFloor = async ({ id }) => {
-  const floor = await Floor.build(id)
+const getFloor = async ({ id }, context) => {
+  if(!context?.isAuth) throw new Error("Error retrieving Floor data. You are not authenticated.")
+  const floor = await Floor.build(id, context)
   return floor
 }
 

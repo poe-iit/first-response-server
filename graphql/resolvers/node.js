@@ -5,9 +5,11 @@ const NodeModel = model("Node", nodeSchema)
 
 // Define a 'Node' class to encapsulate node-related operations and data
 class Node {
-  constructor(node) {
-    // console.log(node)
+  constructor(node, context) {
+    if(!context?.isAuth) throw new Error("Error retrieving Node data. You are not authenticated.")
+    this.context = context
     this.node = node
+    // console.log(node)
     this.id = node.id || ""
     this.name = node.name || ""
     this.state = node.state

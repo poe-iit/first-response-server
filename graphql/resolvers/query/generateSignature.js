@@ -3,7 +3,9 @@ const Signature = require("../signature")
 
 // Define an asynchronous function to generate a cryptographic signature based on the provided 'id'
 // The function expects an object with an 'id' property
-const generateSignature = async ({ id }) => {
+const generateSignature = async ({ id }, context) => {
+  // Create a wrapper of some sort so you don't have to do this on every query
+  if(!context?.isAuth) throw new Error("Error generating Signature. You are not authenticated.")
   const timestamp = Math.round((new Date()).getTime() / 1000)
 
   const params_to_sign = {
@@ -18,7 +20,7 @@ const generateSignature = async ({ id }) => {
 
   const signature = crypto.createHash("sha1").update(param_string+process.env.CLOUDINARY_SECRET).digest("hex")
 
-  const response = new Signature(signature, timestamp)
+  const response = new Signature({signature, timestamp}, context)
   return response
 }
 
