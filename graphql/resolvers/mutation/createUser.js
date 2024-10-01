@@ -20,11 +20,20 @@ const createUser = async ({ email, password }, context) => {
 
   const newUser = await UserModel.create({ email, password: hashedPassword, roles: ["user"] })
 
-  const token = jwt.sign({ userId: newUser.id, roles: ["user"] }, process.env.ACCESS_SECRET, { expiresIn: '3d' })
+  const userId = newUser.id
+  const roles = ["user"]
+
+  const token = jwt.sign({ userId, roles }, process.env.ACCESS_SECRET, { expiresIn: '3d' })
 
   context.response.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
 
-  return new User(newUser)
+  context.isAuth = true
+  context.user = {
+    userId,
+    roles
+  }
+
+  return new User(newUser, context)
 }
 
 // Export the 'createUser' function to make it accessible from other modules
