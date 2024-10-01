@@ -25,7 +25,9 @@ router.get("/send_hello", (_, res) => {
 router.get("/floor", (req, res) => {
   // Publish a "FLOOR_UPDATE" event with data for a specific floor
   pubsub.publish("FLOOR_UPDATE", {
-    floorUpdate: Floor.build("660e5641660cb8aa1184bf24")
+    floorUpdate: Floor.build("660e5641660cb8aa1184bf24", {
+      isAuth: true
+    })
   })
   // Respond with a JSON message confirming success
   res.status(200).json({
