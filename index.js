@@ -5,6 +5,7 @@ const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 const WebSocket = require('ws')
 const authenticate = require("./middleware/authenticate")
+const authParse = require("./helpers/authParse")
 
 // Import GraphQL related tools
 const { graphqlHTTP } = require("express-graphql")
@@ -14,6 +15,7 @@ const { subscribe, execute } = require("graphql")
 // Import GraphQL schema and resolvers
 const { schema: graphqlSchema } = require("./graphql/typeDefs/schema");
 const { resolvers } = require("./graphql/resolvers/resolvers");
+
 
 // Import /test router
 const test = require("./route/test")
@@ -36,9 +38,9 @@ app.use(authenticate)
 
 // Create a context object for GraphQL to include auth status and user info
 const createContext = (req, res) => ({
-  response: res,
-  isAuth: req.isAuth,
-  user: req.user
+  response: res || undefined,
+  isAuth: req.isAuth || false,
+  user: req.user || null
 })
 
 // Routes to test server and publish events on the pubsub system
@@ -57,7 +59,7 @@ mongoose.connect(process.env.DATABASE_URL).then(() => {
   console.log("MongoDB connected")
 
   // Start the HTTP server and listen on the specified PORT
-  const server = app.listen(process.env.PORT || 5000, () => {
+  const server = app.listen(process.env.PORT || 5000, (req, res) => {
     // Log HTTP connection info
     const sAddress = server.address()
     console.log(`[${process.env.NODE_ENV}] GraphQL Server running on http://localhost:${sAddress.port}/graphql`)
@@ -70,9 +72,14 @@ mongoose.connect(process.env.DATABASE_URL).then(() => {
     })
 
     // Set up the GraphQL Websocket server for handling real-time subscriptions
+    // context: createContext(req, res),
     useServer({
       schema: graphqlSchema,
       roots: resolvers,
+      context: (ctx) => {
+        authParse(ctx.extra.request)
+        return createContext(ctx.extra.request)
+      },
       execute,
       subscribe,
       onConnect: (ctx) => {
