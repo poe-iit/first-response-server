@@ -1,3 +1,6 @@
+# About
+This server handles the backend logic for managing buildings, floors, and user interactions with real-time update. It servers responses and publishes events using GraphQL over *http*, *ws*, *https* and *wss*
+
 # Setup
 
 ## Clone repository
