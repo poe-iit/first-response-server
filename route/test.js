@@ -2,7 +2,7 @@
 const router = require("express").Router()
 
 // Import pubsub helper for publishing events
-const pubsub = require("../helpers/pubsub")
+const pubsub = require("../utils/pubsub")
 
 // Import the Floor resolver to handle fetching floor data
 const Floor = require("../graphql/resolvers/floor")

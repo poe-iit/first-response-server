@@ -5,7 +5,7 @@ const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 const WebSocket = require('ws')
 const authenticate = require("./middleware/authenticate")
-const authParse = require("./helpers/authParse")
+const authParse = require("./utils/authParse")
 
 // Import GraphQL related tools
 const { graphqlHTTP } = require("express-graphql")

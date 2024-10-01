@@ -1,4 +1,4 @@
-const authParse = require("../helpers/authParse")
+const authParse = require("../utils/authParse")
 
 // Middleware function to authenticate tokens in incoming requests
 function authenticateToken(req, _, next) {
