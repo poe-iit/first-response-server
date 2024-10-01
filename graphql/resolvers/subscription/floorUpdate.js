@@ -1,6 +1,6 @@
-const pubsub = require("../../../helpers/pubsub")
-const { withFilter } = require("../../../helpers/withFilter")
-const { withAuthorisation } = require("../../../helpers/withAuthorisation")
+const pubsub = require("../../../utils/pubsub")
+const { withFilter } = require("../../../utils/withFilter")
+const { withAuthorisation } = require("../../../utils/withAuthorisation")
 
 // Define a filtered subscription for floor updates using 'withFilter'
 // 'withFilter' takes two arguments:
