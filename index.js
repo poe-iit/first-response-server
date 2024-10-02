@@ -5,6 +5,7 @@ const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 const WebSocket = require('ws')
 const authenticate = require("./middleware/authenticate")
+const rateLimiter = require("./middleware/rateLimiter")
 const authParse = require("./utils/authParse")
 
 // Import GraphQL related tools
@@ -16,7 +17,6 @@ const { subscribe, execute } = require("graphql")
 const { schema: graphqlSchema } = require("./graphql/typeDefs/schema");
 const { resolvers } = require("./graphql/resolvers/resolvers");
 
-
 // Import /test router
 const test = require("./route/test")
 
@@ -25,6 +25,9 @@ dotenv.config()
 
 // Create an instance of the Express application
 const app = express()
+
+// Add rate limiter
+app.use(rateLimiter)
 
 // Use CORS to handle cross-origin requests
 app.use(cors())
