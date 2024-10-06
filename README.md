@@ -77,6 +77,69 @@ This file provides a utility function to filter subscription results for GraphQL
   - Takes an asynchronous iterator function (`asyncIteratorFn`) and a filtering function (`filterFn`).
   - Filters results from the iterator based on the filtering logic provided in `filterFn`.
   - If a result passes the filter, it gets returned; otherwise, it waits for the next matching result.
+ 
+# models folder
+
+this folder cotains mongoose schemas that defines the Structure of the data models for the project, below is the break down of what each files do.
+
+## 1. 'building.js' 
+
+this file defines the schema for bulding in MongoDB, and represents buildings with different floors. 
+
+- **Functionality**:
+- name: A required string that stores the name of the building.
+- floors: An array of floor objects, each containing:
+- id: A reference to the 'floor' collection, represented by an ObjectId.
+- name: A required string that stores the name of the floor.
+
+## 2. 'floor.js'
+
+this file defined the schema for floors in MongoDB, representing the floors in a building and their asscociated nodes and paths. 
+- **Functionality**:
+-name: A required string that stores the name of the floor.
+-building: A reference to the Building collection, represented by an ObjectId.
+-nodes: A map object that stores node data, based on the nodeSchema.
+-paths: A map object that stores paths between nodes.
+-image: Stores information related to the floor's image, including:
+name: Name of the image file.
+url: URL of the image file.
+position: Array of numbers representing the image position.
+-scale: A number that sets the image scale, with a default value of 1.
+
+
+## 3. 'log.js'
+
+This file defines the schema for Log in MongoDB. It stores log data related to specific nodes within buildings and floors.
+
+- **Functionality**:
+-building: A required string that stores the name of the building where the log occurred.
+-floor: A required string that stores the name of the floor where the log occurred.
+-node: A required string that stores the node associated with the log.
+-type: A required string that indicates the type of log (e.g., error, info).
+-message: A required string that stores the log message.
+
+## 4. 'user.js'
+This file defines the schema for User in MongoDB. It represents users in the system, including their roles and associated buildings.
+
+- **Functionality**:
+-username: An optional string that stores the user's username.
+-email: A required string that stores the user's email address.
+-password: A required string that stores the user's password.
+-roles: A required array of strings that defines the user's roles (e.g., admin, user).
+-buildings: An array of ObjectIds that reference the Building collection, representing the buildings the user is associated with.
+
+## 5. 'node.js'
+This file defines the schema for Node in MongoDB. It represents individual nodes within floors, this schema is used to organize and structure the node data in a MongoDB collection.
+
+- **Functionality**:
+-name: An optional string that stores the name of the node.
+-state: A required string that represents the current state of the node.
+-isExit: A required boolean that indicates whether the node is an exit point.
+-connections: An array of strings that stores the names of nodes connected to this node.
+-ui: An object that stores UI-related data, including:
+x: A required number that represents the x-coordinate of the node's position in the UI.
+y: A required number that represents the y-coordinate of the node's position in the UI.
+
 
 ## Usage
 
