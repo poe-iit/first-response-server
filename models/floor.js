@@ -1,11 +1,8 @@
 // Destructure Schema from Mongoose to define a schema for a MongoDB collection
-const { Schema } = require("mongoose")
+const { model,Schema } = require("mongoose")
 
 // Destructure ObjectId type from Mongoose to use it as a reference type in the schema
 const { ObjectId } = require("mongoose").Types
-
-// Import nodeSchema to use it as a reference type in the schema
-const { nodeSchema } = require("./node")
 
 // Define a schema for a "Floor" collection
 const floorSchema = new Schema({
@@ -42,6 +39,23 @@ const floorSchema = new Schema({
 }, {
   // Add createdAt and updatedAt timestamps to the schema automatically
   timestamps: true
+})
+
+floorSchema.post("save", (doc) => {
+  const { buildingSchema } = require("../../../models/building")
+  const BuildingModel = model("Building", buildingSchema )
+
+  const buildingId = doc.building
+
+  const building = BuildingModel.findById(buildingId)
+  if(!building) throw new Error("Building not found")
+
+  const uniqueFLoors = new Set(building.floors)
+  uniqueFLoors.add(doc.id)
+
+  building.floors = Array.from(uniqueFLoors)
+
+  building.save()
 })
 
 // Export the floor schema as part of an object
