@@ -12,7 +12,15 @@ const nodeSchema = new Schema({
     type: Boolean,
     required: true
   },
-  connections: [String], // Array of connections
+  floor: {
+    type: ObjectId,
+    ref: "Floor",
+    required: true
+  },
+  connections: [{
+    type: ObjectId,
+    ref: "InvisibleNode"
+  }], // Array of connections
   ui: {
     x: {
       type: Number,
