@@ -50,7 +50,7 @@ This file defines a middleware function for authenticating incoming requests by 
 - **Functionality**:
   - Relies on the `authParse.js` file from the `utils` folder to extract and validate JWT tokens from the request headers or cookies.
   - After token validation, it proceeds with the next middleware or route handler.
-  - For more details on how token parsing and validation works, refer to the `authParse.js` section of the `README`.
+  - For more details on how token parsing and validation works, refer to the `authParse.js` section of the `README` under the `Utility Folder` section.
 
 ### 2. `rateLimiter.js`
 
