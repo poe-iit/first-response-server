@@ -1,5 +1,12 @@
 // Mutations
+const { createBuilding } = require("./mutation/createBuilding")
+const { createFloor } = require("./mutation/createFloor")
+const { createNode } = require("./mutation/createNode")
+const { createNodes } = require("./mutation/createNodes")
 const { createUser } = require("./mutation/createUser")
+const { updateBuilding } = require("./mutation/updateBuilding")
+const { updateFloor } = require("./mutation/updateFloor")
+const { updateNode } = require("./mutation/updateNode")
 
 // Queries
 const { generateSignature } = require("./query/generateSignature")
@@ -15,7 +22,14 @@ const { sendHello } = require("./subscription/sendHello")
 
 // Resolver
 const resolvers = {
+  createBuilding,
+  createFloor,
+  createNode,
+  createNodes,
   createUser,
+  updateBuilding,
+  updateFloor,
+  updateNode,
   generateSignature,
   getBuilding,
   getBuildings,
