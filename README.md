@@ -37,6 +37,33 @@ npm start
 ```
 ----------------------------------------------------------------------------------------------------
 
+# Middleware Folder
+
+This folder contains middleware functions used throughout the project to handle authentication and rate limiting. Below is a breakdown of each file and its purpose.
+
+## Files:
+
+### 1. `authenticate.js`
+
+This file defines a middleware function for authenticating incoming requests by leveraging the authParse utility function.
+
+- **Functionality**:
+  - Relies on the `authParse.js` file from the `utils` folder to extract and validate JWT tokens from the request headers or cookies.
+  - After token validation, it proceeds with the next middleware or route handler.
+  - For more details on how token parsing and validation works, refer to the `authParse.js` section of the `README`.
+
+### 2. `rateLimiter.js`
+
+This file configures and exports rate-limiting middleware using the `express-rate-limit` package to prevent excessive requests.
+
+- **Functionality**:
+  - Limits incoming requests to 100 requests per 5 minutes per IP address.
+  - Adds `RateLimit` headers to the response to inform clients of their rate limit status.
+  - Helps to prevent abuse or overloading of the server by enforcing request limits.
+
+## Usage
+These middleware functions are essential for securing the application by handling token-based authentication and controlling traffic through rate limiting.
+
 # Utility Folder
 
 This folder contains utility functions and middleware used throughout the project. Below is a breakdown of each file and its purpose:
