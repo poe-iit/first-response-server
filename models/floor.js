@@ -15,12 +15,13 @@ const floorSchema = new Schema({
   },
   building: {
     type: ObjectId,
-    ref: "Building"
+    ref: "Building",
+    required: true
   },
-  nodes: {
-    type: Map,
-    of: nodeSchema
-  },
+  nodes: [{
+    type: ObjectId,
+    ref: "Node",
+  }],
   paths: {
     type: Map,
     of: Schema.Types.Mixed
