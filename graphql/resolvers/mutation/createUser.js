@@ -10,6 +10,7 @@ const User = require("../user")
 // Define an asynchronous function to create a user based on the provided 'email' and 'password'
 // The function expects an object with an 'email' and 'password' property
 const createUser = async ({ email, password }, context) => {
+  // regex for email validation: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
   const existingUser = await UserModel.findOne({ email })
 
   if(existingUser) {
