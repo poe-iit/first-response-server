@@ -11,14 +11,8 @@ const buildingSchema = new Schema({
     required: true
   },
   floors: [{
-    id: {
-      type: ObjectId,
-      ref: "Floor"
-    },
-    name: {
-      type: String,
-      required: true
-    }
+    type: ObjectId,
+    ref: "Floor",
   }]
 }, {
   // Add createdAt and updatedAt timestamps to the schema automatically
