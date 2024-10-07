@@ -1,6 +1,12 @@
 const { buildSchema } = require("graphql");
 
+const createBuilding = require("./mutation/createBuilding")
+const createFloor = require("./mutation/createFloor")
+const createNode = require("./mutation/createNode")
 const createUser = require("./mutation/createUser")
+const updateBuilding = require("./mutation/updateBuilding")
+const updateFloor = require("./mutation/updateFloor")
+const updateNode = require("./mutation/updateNode")
 
 const generateSignature = require("./query/generateSignature");
 const getBuilding = require("./query/getBuilding")
@@ -21,9 +27,22 @@ const nodeUI = require("./nodeUI")
 const signature = require("./signature");
 const user = require("./user");
 
+const buildingInput = require("./buildingInput")
+const floorImageInput = require("./floorImageInput")
+const floorInput = require("./floorInput")
+const invisibleNodeInput = require("./invisibleNodeInput")
+const nodeInput = require("./nodeInput")
+const nodeUIInput = require("./nodeUIInput")
+
 const schema = buildSchema(`
   type Mutation {
+    ${createBuilding.schema}
+    ${createFloor.schema}
+    ${createNode.schema}
     ${createUser.schema}
+    ${updateBuilding.schema}
+    ${updateFloor.schema}
+    ${updateNode.schema}
   }
 
   type Query {
@@ -39,6 +58,17 @@ const schema = buildSchema(`
     ${sendHello.schema}
     ${floorUpdate.schema}
   }
+
+  ${buildingInput.createBuildingInput.schema}
+  ${buildingInput.updateBuildingInput.schema}
+  ${floorImageInput.schema}
+  ${floorInput.createFloorInput.schema}
+  ${floorInput.updateFloorInput.schema}
+  ${invisibleNodeInput.schema}
+  ${nodeInput.createNodeInput.schema}
+  ${nodeInput.nodeReferenceInput.schema}
+  ${nodeInput.updateNodeInput.schema}
+  ${nodeUIInput.schema}
 
   ${building.schema}
   ${floor.schema}
