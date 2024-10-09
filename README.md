@@ -81,7 +81,7 @@ The `query` folder contains the file(s) that define the schemas for generating a
 
 ### `subscription` Folder
 
-The `query` folder contains the file(s) that define the schemas for subscribing to a floor and/or updating it.
+The `subscription` folder contains the file(s) that define the schemas for subscribing to a floor and/or updating it.
 
 ### Files `building.js` through `user.js`
 
