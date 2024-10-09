@@ -41,51 +41,51 @@ npm start
 
 The `graphql` folder defines the functions and schemas necessary for the graphql system to handle the functionality and data between the user and building information. 
 
-## The `graphql` folder contains the following:
+This folder contains the following:
 
 ### resolvers Folder
 
-The `resolvers` folder contains the files and folders necessary to define the functions and classes of the schemas for the graphql system.
+The `resolvers` folder contains the file(s) and folder(s) necessary to define the functions and classes of the schemas for the graphql system.
 
 ### typeDefs Folder 
 
-The `typeDefs` folder contains the files and folders necessary to define the schemas and its types for the graphql system.
+The `typeDefs` folder contains the file(s) and folder(s) necessary to define the schemas and its types for the graphql system.
 
-## The `resolvers` folder contains the following folders & files:
-
-### `mutation` Folder
-
-Summary Description (Placeholder):
-
-### `query` Folder
-
-Summary Description (Placeholder):
-
-### `subscription` Folder
-
-Summary Description (Placeholder):
-
-### Files `building.js` through `user.js`
-
-Summary Description (Placeholder):
-
-## The `typeDefs` folder contains the following folders & files:
+## The `resolvers` folder contains the following:
 
 ### `mutation` Folder
 
-The `mutation` folder contains the files that define the shemas for creating or updating a building layout, floor layout, node, or user.
+The `mutation` folder contains file(s) which hold the functions to create or update a building layout, floor layout, node(s), user.
 
 ### `query` Folder
 
-The `query` folder contains the files that define the schemas for generating a signature, getting the building or floor information, or loging in a user.
+The `query` folder contains file(s) which hold the functions to generate a signature, login a user, or get the information of a building or floor layout(s).
 
 ### `subscription` Folder
 
-The `query` folder contains the files that define the schemas for subscribing to a floor and updating it.
+The `subscription` folder contains file(s) which hold the functions to subscribe to a floor and/or update it.
 
 ### Files `building.js` through `user.js`
 
-These are the files that define the schemas that will be used to provide the functionality for the building layout information and the users.
+These file(s) are the classes that define the logic for the building layout, floor layout, node, resolvers, signature, and the user.
+
+## The `typeDefs` folder contains the following:
+
+### `mutation` Folder
+
+The `mutation` folder contains the file(s) that define the shemas for creating or updating a building layout, floor layout, node, or user.
+
+### `query` Folder
+
+The `query` folder contains the file(s) that define the schemas for generating a signature, getting the building or floor information, or loging in a user.
+
+### `subscription` Folder
+
+The `query` folder contains the file(s) that define the schemas for subscribing to a floor and/or updating it.
+
+### Files `building.js` through `user.js`
+
+These are the file(s) that define the schemas that will be used to provide the functionality for the building layout information and the users.
 
 ----------------------------------------------------------------------------------------------------
 
