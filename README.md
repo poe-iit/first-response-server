@@ -1,3 +1,14 @@
+# Table of Contents
+- [About](#about)
+- [Setup](#setup)
+- [Documentation](#documentation)
+  - [graphql](#graphql-folder)
+    - [Resolvers folder](#resolv-dir)
+    - [typeDefs folder](#typeDefs-dir)
+  - [Middleware](#middleware-folder)
+  - [Utilities](#utility-folder)
+  - [Models](#models-folder)
+
 # About
 This server handles the backend logic for managing buildings, floors, and user interactions with real-time update. It servers responses and publishes events using GraphQL over *http*, *ws*, *https* and *wss*
 
@@ -37,65 +48,65 @@ npm start
 ```
 ----------------------------------------------------------------------------------------------------
 
-# graphql Folder
+# Documentation
+
+## graphql Folder
 
 The `graphql` folder defines the functions and schemas necessary for the graphql system to handle the functionality and data between the user and building information. 
 
 This folder contains the following:
 
-### resolvers Folder
+#### resolvers Folder
 
 The `resolvers` folder contains the file(s) and folder(s) necessary to define the functions and classes of the schemas for the graphql system.
 
-### typeDefs Folder 
+#### typeDefs Folder 
 
 The `typeDefs` folder contains the file(s) and folder(s) necessary to define the schemas and its types for the graphql system.
 
-## The `resolvers` folder contains the following:
+### The `resolvers` folder contains the following: <a name=resolv-dir />
 
-### `mutation` Folder
+#### `mutation` Folder
 
 The `mutation` folder contains file(s) which hold the functions to create or update a building layout, floor layout, node(s), user.
 
-### `query` Folder
+#### `query` Folder
 
 The `query` folder contains file(s) which hold the functions to generate a signature, login a user, or get the information of a building or floor layout(s).
 
-### `subscription` Folder
+#### `subscription` Folder
 
 The `subscription` folder contains file(s) which hold the functions to subscribe to a floor and/or update it.
 
-### Files `building.js` through `user.js`
+#### Files `building.js` through `user.js`
 
 These file(s) are the classes that define the logic for the building layout, floor layout, node, resolvers, signature, and the user.
 
-## The `typeDefs` folder contains the following:
+### The `typeDefs` folder contains the following: <a name=typeDefs-dir />
 
-### `mutation` Folder
+#### `mutation` Folder
 
 The `mutation` folder contains the file(s) that define the shemas for creating or updating a building layout, floor layout, node, or user.
 
-### `query` Folder
+#### `query` Folder
 
 The `query` folder contains the file(s) that define the schemas for generating a signature, getting the building or floor information, or loging in a user.
 
-### `subscription` Folder
+#### `subscription` Folder
 
 The `subscription` folder contains the file(s) that define the schemas for subscribing to a floor and/or updating it.
 
-### Files `building.js` through `user.js`
+#### Files `building.js` through `user.js`
 
 These are the file(s) that define the schemas that will be used to provide the functionality for the building layout information and the users.
 
-----------------------------------------------------------------------------------------------------
-
-# Middleware Folder
+## Middleware Folder
 
 This folder contains middleware functions used throughout the project to handle authentication and rate limiting. Below is a breakdown of each file and its purpose.
 
-## Files:
+### Files:
 
-### 1. `authenticate.js`
+#### 1. `authenticate.js`
 
 This file defines a middleware function for authenticating incoming requests by leveraging the authParse utility function.
 
@@ -104,7 +115,7 @@ This file defines a middleware function for authenticating incoming requests by 
   - After token validation, it proceeds with the next middleware or route handler.
   - For more details on how token parsing and validation works, refer to the `authParse.js` section of the `README` under the `Utility Folder` section.
 
-### 2. `rateLimiter.js`
+#### 2. `rateLimiter.js`
 
 This file configures and exports rate-limiting middleware using the `express-rate-limit` package to prevent excessive requests.
 
@@ -113,16 +124,16 @@ This file configures and exports rate-limiting middleware using the `express-rat
   - Adds `RateLimit` headers to the response to inform clients of their rate limit status.
   - Helps to prevent abuse or overloading of the server by enforcing request limits.
 
-## Usage
+### Usage
 These middleware functions are essential for securing the application by handling token-based authentication and controlling traffic through rate limiting.
 
-# Utility Folder
+## Utility Folder
 
 This folder contains utility functions and middleware used throughout the project. Below is a breakdown of each file and its purpose:
 
-## Files:
+### Files:
 
-### 1. `authparse.js`
+#### 1. `authparse.js`
 
 This file contains a middleware function to authenticate incoming requests by parsing JWT tokens from either cookies or the Authorization header.
 
@@ -132,14 +143,14 @@ This file contains a middleware function to authenticate incoming requests by pa
   - Sets the `isAuth` property on the request (`req.isAuth`) based on the validity of the token.
   - If the token is valid, it attaches the user information to the request (`req.user`).
 
-### 2. `pubsub.js`
+#### 2. `pubsub.js`
 
 This file manages the Pub/Sub (publish/subscribe) functionality for GraphQL subscriptions using the `graphql-subscriptions` package.
 
 - **Functionality**:
   - Creates and exports an instance of the `PubSub` class, which allows different parts of the application to subscribe and publish events.
 
-### 3. `withAuthorization.js`
+#### 3. `withAuthorization.js`
 
 This file defines a utility function for checking user roles before allowing access to certain parts of the application.
 
@@ -148,7 +159,7 @@ This file defines a utility function for checking user roles before allowing acc
   - If the user’s roles match any of the allowed roles, the function continues with the iterator function.
   - If the user is not authorized, it stops further execution by returning an iterator that signals completion.
 
-### 4. `withFilter.js`
+#### 4. `withFilter.js`
 
 This file provides a utility function to filter subscription results for GraphQL based on specific conditions.
 
@@ -156,15 +167,14 @@ This file provides a utility function to filter subscription results for GraphQL
   - Takes an asynchronous iterator function (`asyncIteratorFn`) and a filtering function (`filterFn`).
   - Filters results from the iterator based on the filtering logic provided in `filterFn`.
   - If a result passes the filter, it gets returned; otherwise, it waits for the next matching result.
-----------------------------------------------------------------------------------------------------
 
-# Models Folder
+## Models Folder
 
 This folder contains mongoose schemas that define the structure of the data models for the project, below is the breakdown of what each files do.
 
-## Files
+### Files
 
-###  1. `building.js` 
+####  1. `building.js` 
 
 This file defines the schema for `Bulding` in MongoDB, and represents buildings with different floors. 
 
@@ -174,7 +184,7 @@ This file defines the schema for `Bulding` in MongoDB, and represents buildings 
   - `id`: A reference to the 'floor' collection, represented by an ObjectId.
   - `name`: A required string that stores the name of the floor.
 
-### 2. `floor.js`
+#### 2. `floor.js`
 
 This file defined the schema for `Floor` in MongoDB, representing the floors in a building and their associated nodes and paths. 
 
@@ -189,7 +199,7 @@ This file defined the schema for `Floor` in MongoDB, representing the floors in 
     - `position`: Array of numbers representing the image position.
     - `scale`: A number that sets the image scale, with a default value of 1.
 
-### 3. `log.js`
+#### 3. `log.js`
 
 This file defines the schema for `Log` in MongoDB. It stores log data related to specific nodes within buildings and floors.
 
@@ -200,7 +210,7 @@ This file defines the schema for `Log` in MongoDB. It stores log data related to
   -  `type`: A required string that indicates the type of log (e.g., error, info).
   -  `message`: A required string that stores the log message.
 
-### 4. `user.js`
+#### 4. `user.js`
 
 This file defines the schema for `User` in MongoDB. It represents users in the system, including their roles and associated buildings.
 
@@ -211,7 +221,7 @@ This file defines the schema for `User` in MongoDB. It represents users in the s
   - `roles`: A required array of strings that defines the user's roles (e.g., admin, user).
   - `buildings`: An array of ObjectIds that reference the Building collection, representing the buildings the user is associated with.
 
-### 5. `node.js`
+#### 5. `node.js`
 This file defines the schema for `Node` in MongoDB. It represents individual nodes within floors, this schema is used to organize and structure the node data in a MongoDB collection.
 
 - **Functionality**:
@@ -224,6 +234,6 @@ This file defines the schema for `Node` in MongoDB. It represents individual nod
     - `y`: A required number representing the y-coordinate of the node's position in the UI.
 
 
-## Usage
+### Usage
 
 These utilities are essential for handling authentication, authorization, and subscription filtering within the project. They can be imported and used in other parts of the application as needed.
