@@ -15,6 +15,7 @@ const { getBuildings } = require("./query/getBuildings")
 const { getFloor } = require("./query/getFloor")
 const { getFloors } = require("./query/getFloors")
 const { loginUser } = require("./query/loginUser")
+const { validateSession } = require("./query/validateSession")
 
 // Subscriptions
 const { floorUpdate } = require("./subscription/floorUpdate")
@@ -36,6 +37,7 @@ const resolvers = {
   getFloor,
   getFloors,
   loginUser,
+  validateSession,
   subscription: {
     sendHello,
     floorUpdate
