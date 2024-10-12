@@ -27,6 +27,7 @@ class User {
     this.email = user.email
     // Intentionally skipped user.password
     this.roles = user.roles
+    this.accountStatus = user.accountStatus
     
     this.createdAt = user.createdAt
     this.updatedAt = user.updatedAt
