@@ -26,6 +26,7 @@ const hello = require("./hello")
 const node = require("./node")
 const nodeUI = require("./nodeUI")
 const signature = require("./signature");
+const status = require("./status")
 const user = require("./user");
 
 const buildingInput = require("./buildingInput")
@@ -79,6 +80,7 @@ const schema = buildSchema(`
   ${node.schema}
   ${nodeUI.schema}
   ${signature.schema}
+  ${status.schema}
   ${user.schema}
 `)
 
