@@ -10,7 +10,7 @@ const logoutUser = async (_, context) => {
   context.response.cookie('token', "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSide: "None",
+    sameSite: process.env.NODE_ENV === 'production' ? "None" : undefined,
     expires: new Date(0)
   })
   
