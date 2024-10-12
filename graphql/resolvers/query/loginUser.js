@@ -27,7 +27,7 @@ const loginUser = async ({ email, password }, context) => {
 
   const token = jwt.sign({ userId, roles }, process.env.ACCESS_SECRET, { expiresIn: '3d' })
 
-  context.response.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
+  context.response.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSide: "None" })
   
   context.isAuth = true
   context.user = {
