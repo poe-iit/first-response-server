@@ -19,7 +19,9 @@ const createUser = async ({ email, password }, context) => {
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  const newUser = await UserModel.create({ email, password: hashedPassword, roles: ["user"] })
+  const newUser = await UserModel.create({ email, password: hashedPassword, roles: ["user"], accountStatus: "created" })
+
+  // active is another state
 
   const userId = newUser.id
   const roles = ["user"]
@@ -33,6 +35,8 @@ const createUser = async ({ email, password }, context) => {
     userId,
     roles
   }
+
+  // Send a mail somewhere around here with their credentials
 
   return new User(newUser, context)
 }
