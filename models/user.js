@@ -23,9 +23,13 @@ const userSchema = new Schema({
     required: true
   },
   buildings: [{
-      type: ObjectId,
-      ref: "Building"
-    }]
+    type: ObjectId,
+    ref: "Building"
+  }],
+  accountStatus: {
+    type: String,
+    required: true
+  }
 }, {
   // Add createdAt and updatedAt timestamps to the schema automatically
   timestamps: true
@@ -35,3 +39,8 @@ const userSchema = new Schema({
 module.exports = {
   userSchema
 }
+
+// Create a way to clearly define accountStatus, roles, etc.
+
+// Account status: created, active, inactive, blocked
+// Roles: Figure out a system for roles
