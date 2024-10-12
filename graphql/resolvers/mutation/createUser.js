@@ -28,7 +28,12 @@ const createUser = async ({ email, password }, context) => {
 
   const token = jwt.sign({ userId, roles }, process.env.ACCESS_SECRET, { expiresIn: '3d' })
 
-  context.response.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: "None" })
+  context.response.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? "None" : undefined,
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  })
 
   context.isAuth = true
   context.user = {
