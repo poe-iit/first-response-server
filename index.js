@@ -1,6 +1,5 @@
 // Import necessary packages
 const express = require("express")
-const cors = require("cors")
 const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 const WebSocket = require('ws')
@@ -19,6 +18,8 @@ const { resolvers } = require("./graphql/resolvers/resolvers");
 
 // Import /test router
 const test = require("./route/test")
+const headerMiddleWare = require("./middleware/header")
+const addHeaders = require("./utils/addHeaders")
 
 // Load environment variables
 dotenv.config()
@@ -26,11 +27,15 @@ dotenv.config()
 // Create an instance of the Express application
 const app = express()
 
+app.options('*', (req, res) => {
+  addHeaders(req, res)
+  res.sendStatus(200)
+})
+
 // Add rate limiter
 app.use(rateLimiter)
 
-// Use CORS to handle cross-origin requests
-app.use(cors())
+app.use(headerMiddleWare)
 
 // Parse incoming JSON and URL-encoded data
 app.use(express.json())
