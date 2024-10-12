@@ -14,6 +14,7 @@ const getBuildings = require("./query/getBuildings")
 const getFloor = require("./query/getFloor")
 const getFloors = require("./query/getFloors")
 const loginUser = require("./query/loginUser")
+const logoutUser = require("./query/logoutUser");
 const validateSession = require("./query/validateSession")
 
 const floorUpdate = require("./subscription/floorUpdate");
@@ -55,6 +56,7 @@ const schema = buildSchema(`
     ${getFloors.schema}
     ${loginUser.schema}
     ${validateSession.schema}
+    ${logoutUser.schema}
   }
 
   type Subscription {
