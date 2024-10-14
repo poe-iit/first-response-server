@@ -33,7 +33,7 @@ app.options('*', (req, res) => {
 })
 
 // Add rate limiter
-app.use(rateLimiter)
+if(process.env.RATE_LIMIT !== "false") app.use(rateLimiter)
 
 app.use(headerMiddleWare)
 
