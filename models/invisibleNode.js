@@ -9,22 +9,10 @@ const invisibleNodeSchema = new Schema({
       type: ObjectId,
       ref: "Node"
     }
-  ],
-  floor: {
-    type: ObjectId,
-    ref: "Floor",
-    required: true
-  },
-  ui: {
-    x: {
-      type: Number,
-      required: true
-    },
-    y: {
-      type: Number,
-      required: true
-    }
-  }
+  ]
+}, {
+  // Add createdAt and updatedAt timestamps to the schema automatically
+  timestamps: true
 })
 
 // Add a post-save hook to the schema
