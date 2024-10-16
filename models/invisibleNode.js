@@ -16,6 +16,23 @@ const invisibleNodeSchema = new Schema({
 })
 
 // Add a post-save hook to the schema
+
+invisibleNodeSchema.post("findOneAndDelete", async (doc) => {
+  const { nodeSchema } = require("./node")
+  const NodeModel = model("Node", nodeSchema )
+
+  const connectedNodes = doc.connectedNodes
+  for(const connectedNodeId of connectedNodes) {
+    const node = await NodeModel.findById(connectedNodeId)
+    if(!node) continue
+    
+    node.connections = node.connections || []
+    node.connections = node.connections.filter((invisibleNodeId) => invisibleNodeId._id.toString() !== doc._id.toString())
+    await node.save()
+  }
+})
+
+
 // This is to toss out worrying about updating the nodes in the actual resolver code
 invisibleNodeSchema.post("save", async (doc) => {
   const { nodeSchema } = require("./node")
@@ -25,7 +42,7 @@ invisibleNodeSchema.post("save", async (doc) => {
   for(const connectedNodeId of connectedNodes) {
     const node = await NodeModel.findById(connectedNodeId)
     if(!node) continue
-
+    
     node.connections = node.connections || []
     node.connections = node.connections.filter((invisibleNodeId) => invisibleNodeId._id.toString() !== doc._id.toString())
     node.connections.push(doc._id)
