@@ -3,10 +3,11 @@ const createNodeInputSchema = `
     name: String!
     state: String!
     isExit: Boolean!
-    ui: NodeUIInput
-    floorId: ID!
+    ui: NodeUIInput!
   }
 `
+// I need operation so I can know what to do with the node
+// Default is create
 
 const nodeReferenceInputSchema = `
   input NodeReferenceInput {

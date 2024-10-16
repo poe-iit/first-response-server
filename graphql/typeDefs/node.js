@@ -4,7 +4,7 @@ const nodeSchema = `
     name: String!
     state: String!
     isExit: Boolean!
-    connections: [String]! #Work on converting this into [Node]
+    connections: [Node]!
     ui: NodeUI
   }
 `
