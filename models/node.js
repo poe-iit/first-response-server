@@ -38,6 +38,30 @@ const nodeSchema = new Schema({
 })
 
 // Add a post-save hook to the schema
+nodeSchema.post("findOneAndDelete", async (doc) => {
+  const { floorSchema } = require("./floor")
+  const { invisibleNodeSchema } = require("./invisibleNode")
+  const FloorModel = model("Floor", floorSchema )
+  const InvisibleNodeModel = model("InvisibleNode", invisibleNodeSchema )
+
+  const floorId = doc.floor.toString()
+  const floor = await FloorModel.findById(floorId)
+
+  if(!floor) throw new Error("Floor not found")
+
+  floor.nodes = floor.nodes.filter(node => node._id.toString() !== doc._id.toString())
+  await floor.save()
+
+  const invisibleNodes = await InvisibleNodeModel.find({ connectedNodes: { $in: doc._id } })
+  for(const invisibleNode of invisibleNodes) {
+    await InvisibleNodeModel.findOneAndDelete({
+      _id: new ObjectId(invisibleNode._id)
+    })
+  }
+})
+
+
+
 // For sanity, I'm doing this so i don't have to worry about it anywhere else
 nodeSchema.post("save", async (doc) => {
   const { floorSchema } = require("./floor")
