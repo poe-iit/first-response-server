@@ -23,19 +23,19 @@ class Floor {
 
     this.id = floor.id
     this.name = floor.name
-    const nodes = []
-    for(const [id, node] of floor.nodes) {
-      const newNode = {
-        id: node.id,
-        ui: node.ui,  
-        state: node.state,
-        isExit: node.isExit,
-        connections: node.connections,
-        name: id
-      }
-      nodes.push(new Node(newNode, this.context))
-    }
-    this.nodes = nodes
+    // const nodes = []
+    // for(const [id, node] of floor.nodes) {
+    //   const newNode = {
+    //     id: node.id,
+    //     ui: node.ui,  
+    //     state: node.state,
+    //     isExit: node.isExit,
+    //     connections: node.connections,
+    //     name: id
+    //   }
+    //   nodes.push(new Node(newNode, this.context))
+    // }
+    // this.nodes = nodes
     this.image = floor.image
     this.createdAt = floor.createdAt
     this.updatedAt = floor.updatedAt
@@ -46,6 +46,16 @@ class Floor {
     const buildingId = this.floor.building
     const building = await Building.build(buildingId, this.context)
     return building
+  }
+
+  async nodes() {
+    const Node = require("./node")
+    const nodes = []
+    for(const nodeId of this.floor.nodes) {
+      const node = await Node.build(nodeId, this.context)
+      nodes.push(node)
+    }
+    return nodes
   }
 }
 
