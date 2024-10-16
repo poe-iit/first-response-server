@@ -1,5 +1,5 @@
 // Change this to update floor in the future
-// Work on adding floorInput too
+// Work on adding floorInput too (updateFloorInput and createFloorInput)
 
 // Logic for connections and stuffs like that
 const { model, Types: { ObjectId } } = require("mongoose")

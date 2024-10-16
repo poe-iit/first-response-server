@@ -4,11 +4,8 @@ const FloorModel = model("Floor", floorSchema )
 
 const Floor = require("../floor")
 
-const { createNode } = require("./createNode")
-// Import createNode
-
 const createFloor = async ({
-  createFloorInput: { name, buildingId, image, nodes }
+  createFloorInput: { name, buildingId, image }
 }, context) => {
   if(!context?.isAuth) throw new Error("Error creating Building. You are not authenticated.")
 
@@ -17,14 +14,6 @@ const createFloor = async ({
 
   floor = new FloorModel({ name, building: buildingId, image })
 
-  if(nodes.length){
-    nodes = nodes.map((node) => {
-      node.floorId = floor.id
-      node = createNode(node, context)
-      return node.id
-    })
-    floor.nodes = nodes.filter(node => node !== null)
-  }
   await floor.save()
 
   return new Floor(floor, context)

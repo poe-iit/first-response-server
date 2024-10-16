@@ -3,8 +3,6 @@ const createFloorInputSchema = `
     name: String!
     buildingId: String!
     image: FloorImageInput
-    nodes: [CreateNodeInput]
-    invisibleNodes: [InvisibleNodeInput]
   }
 `
 
