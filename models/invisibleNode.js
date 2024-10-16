@@ -26,10 +26,10 @@ invisibleNodeSchema.post("save", async (doc) => {
     const node = await NodeModel.findById(connectedNodeId)
     if(!node) continue
 
-    const uniqueConntections = new Set(node.connections)
-    uniqueConntections.add(doc._id)
+    node.connections = node.connections || []
+    node.connections = node.connections.filter((invisibleNodeId) => invisibleNodeId._id.toString() !== doc._id.toString())
+    node.connections.push(doc._id)
 
-    node.connections = Array.from(uniqueConntections)
     await node.save()
   }
 })
