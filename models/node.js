@@ -45,14 +45,12 @@ nodeSchema.post("save", async (doc) => {
 
   const floorId = doc.floor
 
-  const floor = FloorModel.findById(floorId)
+  const floor = await FloorModel.findById(floorId)
 
   if(!floor) throw new Error("Floor not found")
   
-  const uniqueNodes = new Set(floor.nodes)
-  uniqueNodes.add(doc._id)
-
-  floor.nodes = Array.from(uniqueNodes)
+  floor.nodes = floor.nodes.filter(node => node._id.toString() !== doc._id.toString())
+  floor.nodes.push(doc._id)
   await floor.save()
 
 })
