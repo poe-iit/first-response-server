@@ -41,21 +41,20 @@ const floorSchema = new Schema({
   timestamps: true
 })
 
-floorSchema.post("save", (doc) => {
-  const { buildingSchema } = require("../../../models/building")
+floorSchema.post("save", async (doc) => {
+  const { buildingSchema } = require("./building")
   const BuildingModel = model("Building", buildingSchema )
 
   const buildingId = doc.building
 
-  const building = BuildingModel.findById(buildingId)
+  const building = await BuildingModel.findById(buildingId)
   if(!building) throw new Error("Building not found")
 
-  const uniqueFLoors = new Set(building.floors)
-  uniqueFLoors.add(doc.id)
+  building.floors = building.floors || []
+  building.floors = building.floors.filter(floorId => floorId._id.toString() !== doc._id.toString())
+  building.floors.push(doc._id)
 
-  building.floors = Array.from(uniqueFLoors)
-
-  building.save()
+  await building.save()
 })
 
 // Export the floor schema as part of an object
