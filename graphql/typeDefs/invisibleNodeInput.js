@@ -1,13 +1,28 @@
 // Remember to send the ID accross
+// Rename connectedNodes to connections for consistency, in the schemas, resolvers, and website (lots of debugging ahead)
 
-const invisibleNodeInputSchema = `
-  input InvisibleNodeInput {
+const createInvisibleNodeInputSchema = `
+  input CreateInvisibleNodeInput {
     connections: [NodeReferenceInput]!
-    floorId: ID!
-    ui: NodeUIInput!
   }
 `
 
+const updateInvisibleNodeInputSchema = `
+  input UpdateInvisibleNodeInput {
+    id: ID!
+    connections: [NodeReferenceInput]
+    isDeleted: Boolean
+  }
+`
+
+// I need operation so I can know what to do with the node
+// Default is create
+
 module.exports = {
-  schema: invisibleNodeInputSchema
+  createInvisibleNodeInput: {
+    schema: createInvisibleNodeInputSchema
+  },
+  updateInvisibleNodeInput: {
+    schema: updateInvisibleNodeInputSchema
+  }
 }
