@@ -10,15 +10,16 @@ const updateNode = async ({
 }, context) => {
   if(!context?.isAuth) throw new Error("Error updating Node. You are not authenticated.")
 
+  if(isDeleted){
+    await NodeModel.findOneAndDelete({
+      _id: new ObjectId(`${nodeInput.id}`)
+    })
+    return null
+  }
   const node = await NodeModel.findById(id)
 
   if(!node){
     throw new Error("Node not found")
-  }
-
-  if(isDeleted) {
-    await node.deleteOne()
-    return null
   }
 
   node.name = name
@@ -27,6 +28,7 @@ const updateNode = async ({
   node.ui = ui
 
   await node.save()
+  
   return new Node(node, context)
 }
 
