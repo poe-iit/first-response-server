@@ -54,6 +54,12 @@ const createContext = (req, res) => ({
 // Routes to test server and publish events on the pubsub system
 app.use("/test", test)
 
+app.get("/", (req, res) => {
+  res.send({
+    "message": "Hello World!"
+  })
+})
+
 // GraphQL API endpoint, enables graphiql UI and sets up schema, resolvers, and context
 app.use("/graphql", graphqlHTTP((req, res) => ({
   schema: graphqlSchema,
